@@ -2,7 +2,7 @@
 
 from __future__ import annotations
 import sys
-from typing import List
+from typing import List, Tuple
 from math import floor
 
 
@@ -41,6 +41,49 @@ def altPart1(lines: List[str]) -> int:
     return epsilon * (pow(2, len(binaries[0])) - 1 - epsilon)
 
 
+def step(
+    oxygens: List[str], scrubbers: List[str], idx: int
+) -> Tuple[List[str], List[str]]:
+
+    nOxygens = oxygens
+    nScrubbers = scrubbers
+    for i, lines in enumerate((oxygens, scrubbers)):
+        if len(lines) == 1:
+            continue
+
+        mo = []
+        mz = []
+        for line in lines:
+            if line[idx] == "0":
+                mz.append(line)
+            else:
+                mo.append(line)
+
+        if len(mz) > len(mo):
+            if i == 0:
+                nOxygens = mz
+            else:
+                nScrubbers = mo
+        else:
+            if i == 0:
+                nOxygens = mo
+            else:
+                nScrubbers = mz
+
+    return nOxygens, nScrubbers
+
+
+def part2(lines: List[str]) -> int:
+    oxygens = lines[:]
+    scrubbers = lines[:]
+    for i in range(len(lines[0]) - 1):
+        oxygens, scrubbers = step(oxygens, scrubbers, i)
+
+    assert len(oxygens) == 1
+    assert len(scrubbers) == 1
+    return int(oxygens[0], 2) * int(scrubbers[0], 2)
+
+
 def main() -> int:
     if len(sys.argv) < 2:
         return 1
@@ -53,6 +96,9 @@ def main() -> int:
 
     # part 1 alternative
     print(altPart1(lines))
+
+    # part 2
+    print(f"\n{part2(lines)}")
     return 0
 
 
