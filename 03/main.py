@@ -41,13 +41,12 @@ def altPart1(lines: List[str]) -> int:
     return epsilon * (pow(2, len(binaries[0])) - 1 - epsilon)
 
 
-def step(
-    oxygens: List[str], scrubbers: List[str], idx: int
+def mostAndLeastFrequent(
+    most: List[str], least: List[str], idx: int
 ) -> Tuple[List[str], List[str]]:
-
-    nOxygens = oxygens
-    nScrubbers = scrubbers
-    for i, lines in enumerate((oxygens, scrubbers)):
+    nMost = most[:]
+    nLeast = least[:]
+    for i, lines in enumerate((most, least)):
         if len(lines) == 1:
             continue
 
@@ -61,23 +60,23 @@ def step(
 
         if len(mz) > len(mo):
             if i == 0:
-                nOxygens = mz
+                nMost = mz
             else:
-                nScrubbers = mo
+                nLeast = mo
         else:
             if i == 0:
-                nOxygens = mo
+                nMost = mo
             else:
-                nScrubbers = mz
+                nLeast = mz
 
-    return nOxygens, nScrubbers
+    return nMost, nLeast
 
 
 def part2(lines: List[str]) -> int:
     oxygens = lines[:]
     scrubbers = lines[:]
     for i in range(len(lines[0]) - 1):
-        oxygens, scrubbers = step(oxygens, scrubbers, i)
+        oxygens, scrubbers = mostAndLeastFrequent(oxygens, scrubbers, i)
 
     assert len(oxygens) == 1
     assert len(scrubbers) == 1
