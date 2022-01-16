@@ -4,6 +4,7 @@ from __future__ import annotations
 import sys
 from typing import List, Tuple
 from math import floor
+import timeit
 
 
 def part1(lines: List[str]) -> int:
@@ -97,7 +98,11 @@ def main() -> int:
     print(altPart1(lines))
 
     # part 2
-    print(f"\n{part2(lines)}")
+    start = timeit.default_timer()
+    for _ in range(1000):
+        part2(lines)
+    stop = timeit.default_timer()
+    print("Time: ", stop - start)
     return 0
 
 
