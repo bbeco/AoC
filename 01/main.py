@@ -1,35 +1,50 @@
 #!/usr/bin/env python
 
 import sys
+from typing import Iterable, List
 
 
-def main():
-    if len(sys.argv) < 2:
-        return 1
+def bar(lines: List[str]) -> Iterable[List[str]]:
+    def isNumber(x: str) -> bool:
+        try:
+            int(x)
+        except ValueError:
+            return False
+        return True
 
-    with open(sys.argv[1]) as f:
-        values = [int(s) for s in f.readlines()]
+    i = 0
+    while i < len(lines):
+        try:
+            start = [isNumber(_l) for _l in lines].index(True, i)
+        except ValueError:
+            start = len(lines)
+        try:
+            end = [isNumber(_l) for _l in lines].index(False, start)
+        except ValueError:
+            end = len(lines)
+        yield lines[start:end]
+        i = end
 
-    # part 1
-    res = 0
-    for i in range(1, len(values)):
-        if (values[i] > values[i - 1]):
-            res = res + 1
 
-    print(res)
+def listOfCalories(lines: List[str]) -> Iterable[int]:
+    return (sum(_nl) for _nl in ([int(_x) for _x in _l] for _l in bar(lines)))
 
-    # part 2
-    res = 0
-    prev = sum(values[:3])
-    for i in range(3, len(values)):
-        curr = prev - values[i - 3] + values[i]
-        res = res + ((curr - prev) > 0)
-        prev = curr
 
-    print(res)
+def part1(lines: List[str]) -> int:
+    return max(listOfCalories(lines))
 
+
+def part2(lines: List[str]) -> int:
+    return sum(sorted(list(listOfCalories(lines)))[-3:])
+
+
+def main(filePath: str) -> int:
+    with open(filePath, "r") as f:
+        lines = f.readlines()
+    print(part1(lines))
+    print(part2(lines))
     return 0
 
 
 if __name__ == "__main__":
-    sys.exit(main())
+    sys.exit(main(sys.argv[1]))
